@@ -9,3 +9,4 @@ export * from './visita-mascota.model';
 export * from './empleado.model';
 export * from './pagoplan.model';
 export * from './plan.model';
+export * from './credenciales.model';

@@ -1,3 +1,4 @@
+import {filterByServiceInterface, service} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -16,15 +17,49 @@ import {
   del,
   requestBody,
   response,
+  HttpErrors,
 } from '@loopback/rest';
-import {Propietario} from '../models';
+import {Credenciales, Propietario} from '../models';
 import {PropietarioRepository} from '../repositories';
+import {AutenticacionService} from '../services';
+const fetch = require("node-fetch");
+
 
 export class PropietarioController {
   constructor(
     @repository(PropietarioRepository)
     public propietarioRepository : PropietarioRepository,
+    @service(AutenticacionService)
+    public servicioAutenticacion: AutenticacionService
   ) {}
+
+  @post("/identificarPropietario", {
+    responses:{
+      "200":{
+        description: "Identificacion de usuarios"
+      }
+    }
+
+  })
+
+  async identificarPropietario(
+    @requestBody() credenciales: Credenciales
+  ){
+    let p = await this.servicioAutenticacion.IdentificarPropietario(credenciales.usuario, credenciales.clave);
+    if(p){
+      let token = this.servicioAutenticacion.GenerarTokenJWT(p);
+      return{
+        datos:{
+          nombre: p.nombres,
+          usuario: p.usuario,
+          id: p.id
+        },
+        tk: token
+      }
+    }else{
+      throw new HttpErrors[401]("Datos invalidos");
+    }
+  }
 
   @post('/propietarios')
   @response(200, {
@@ -44,7 +79,22 @@ export class PropietarioController {
     })
     propietario: Omit<Propietario, 'id'>,
   ): Promise<Propietario> {
-    return this.propietarioRepository.create(propietario);
+
+    let contrasena = this.servicioAutenticacion.GenerarContrasena();
+    let contrasenaCifrada = this.servicioAutenticacion.CifrarContrasena(contrasena);
+    propietario.contrasena = contrasenaCifrada;
+    let p = await this.propietarioRepository.create(propietario);
+
+    //notificar al usuario
+    let destino = propietario.usuario;
+    let asunto = "Registro en la plataforma";
+    let contenido = `Hola ${propietario.nombres}, su nombre de usuario es: ${propietario.usuario} y su contraseña es: ${contrasena}`;
+
+    fetch(`http://127.0.0.1:5000/envio-correo?correo_destino=${destino}&asunto=${asunto}&contenido=${contenido}`)
+    .then((data:any) => {
+      console.log(data);
+    })
+    return p;
   }
 
   @get('/propietarios/count')
