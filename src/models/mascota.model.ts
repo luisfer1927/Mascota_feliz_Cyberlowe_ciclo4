@@ -1,11 +1,11 @@
-import {Entity, model, property, belongsTo, hasMany} from '@loopback/repository';
-import {Propietario} from './propietario.model';
-import {Proveedor} from './proveedor.model';
+import {belongsTo, Entity, hasMany, model, property} from '@loopback/repository';
 import {ConsultaVet} from './consulta-vet.model';
 import {Empleado} from './empleado.model';
-import {VisitaMascota} from './visita-mascota.model';
-import {Plan} from './plan.model';
 import {Pagoplan} from './pagoplan.model';
+import {Plan} from './plan.model';
+import {Propietario} from './propietario.model';
+import {Proveedor} from './proveedor.model';
+import {VisitaMascota} from './visita-mascota.model';
 
 @model()
 export class Mascota extends Entity {
@@ -42,10 +42,10 @@ export class Mascota extends Entity {
   especie: string;
 
   @property({
-    type: 'boolean',
+    type: 'string',
     required: true,
   })
-  activo: boolean;
+  activo: string;
 
   @property({
     type: 'string',
@@ -66,7 +66,7 @@ export class Mascota extends Entity {
   sexo: string;
 
   @property({
-    type: 'date',
+    type: 'string',
     required: true,
   })
   fechaNac: string;
