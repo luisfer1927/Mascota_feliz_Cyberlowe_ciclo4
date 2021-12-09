@@ -22,7 +22,7 @@
               </div>
             </div>
             <div class="row center-align">
-              <button [disabled]="!fgValidador.valid" class="btn waves-effect waves-light" type="submit" name="action">Ingresar
+              <button [disabled]="!fgValidador.valid" class="btn waves-effect waves-light" type="submit" (click)="identificarUsuario()" name="action">Ingresar
                 <i class="material-icons right">send</i>
               </button>
             </div>
