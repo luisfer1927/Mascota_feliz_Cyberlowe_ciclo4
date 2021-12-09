@@ -3,23 +3,26 @@
       <div class="card grey lighten-3">
         <div class="card-content">
           <h4 class="card-title center-align">Identificación de Usuarios</h4>
-          <form>
+          <form [formGroup]="fgValidador" (ngSubmit)="IdentificarUsuario()">
+
             <div class="row">
               <div class="input-field col s12">
                 <i class="material-icons prefix">email</i>
-                <input type="email" id="email" class="validate" />
+                <input formControlName="usuario" type="email" id="email" class="validate" />
+                
                 <label for="email">Usuario</label>
               </div>
             </div>
             <div class="row">
               <div class="input-field col s12">
                 <i class="material-icons prefix">vpn_key</i>
-                <input type="password" id="password" class="validate" />
+                <input formControlName="clave" type="password" id="password" class="validate" />
+                
                 <label for="email">Contraseña</label>
               </div>
             </div>
             <div class="row center-align">
-              <button class="btn waves-effect waves-light" type="submit" name="action">Ingresar
+              <button [disabled]="!fgValidador.valid" class="btn waves-effect waves-light" type="submit" name="action">Ingresar
                 <i class="material-icons right">send</i>
               </button>
             </div>
